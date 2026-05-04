@@ -1,12 +1,19 @@
 import { useState, useRef, useEffect } from 'react';
-import { X, Send, MessageCircle, Phone } from 'lucide-react';
+import { X, Send, MessageCircle, Phone, PhoneOff } from 'lucide-react';
+import Vapi from '@vapi-ai/web';
+
+const VAPI_PUBLIC_KEY = import.meta.env.VITE_VAPI_PUBLIC_KEY;
+const VAPI_ASSISTANT_ID = import.meta.env.VITE_VAPI_ASSISTANT_ID;
 
 export default function ChatModal({ isOpen, onClose, onNavigate }) {
   const [mode, setMode] = useState(null); // 'chat' or 'voice'
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [isCallActive, setIsCallActive] = useState(false);
+  const [callStatus, setCallStatus] = useState('');
   const messagesEndRef = useRef(null);
+  const vapiRef = useRef(null);
 
   useEffect(() => {
     if (isOpen && messages.length === 0) {
@@ -71,9 +78,150 @@ export default function ChatModal({ isOpen, onClose, onNavigate }) {
     }, 1500);
   };
 
-  const handleVoiceCall = () => {
-    alert('Voice call feature would integrate with VAPI here. For demo purposes, this would initiate a voice conversation.');
+  const handleVoiceCall = async () => {
+    setMode('voice');
+    setCallStatus('Connecting...');
+    
+    try {
+      // Validate credentials
+      if (!VAPI_PUBLIC_KEY || VAPI_PUBLIC_KEY === 'YOUR_PUBLIC_KEY_HERE') {
+        throw new Error('VAPI Public Key not configured');
+      }
+
+      if (!VAPI_ASSISTANT_ID) {
+        throw new Error('VAPI Assistant ID not configured');
+      }
+
+      console.log('Initializing VAPI...');
+      console.log('Public Key:', VAPI_PUBLIC_KEY.substring(0, 8) + '...');
+      console.log('Assistant ID:', VAPI_ASSISTANT_ID);
+      
+      // Initialize VAPI instance
+      if (!vapiRef.current) {
+        vapiRef.current = new Vapi(VAPI_PUBLIC_KEY);
+        console.log('✅ VAPI instance created');
+      }
+
+      const vapi = vapiRef.current;
+
+      // Set up event listeners
+      vapi.on('call-start', () => {
+        console.log('✅ Call started successfully');
+        setIsCallActive(true);
+        setCallStatus('Connected - Speak now');
+      });
+
+      vapi.on('call-end', () => {
+        console.log('📞 Call ended');
+        setIsCallActive(false);
+        setCallStatus('Call ended');
+      });
+
+      vapi.on('speech-start', () => {
+        console.log('🎤 User started speaking');
+        setCallStatus('Listening...');
+      });
+
+      vapi.on('speech-end', () => {
+        console.log('🎤 User stopped speaking');
+        setCallStatus('Processing...');
+      });
+
+      vapi.on('message', (message) => {
+        console.log('📨 Message:', message);
+      });
+
+      vapi.on('error', (error) => {
+        console.error('❌ VAPI Error:', error);
+        console.error('Error type:', typeof error);
+        console.error('Error keys:', Object.keys(error || {}));
+        console.error('Error stringified:', JSON.stringify(error, null, 2));
+        
+        let errorMsg = 'Connection failed';
+        
+        if (error) {
+          if (error.error && error.error.message) {
+            errorMsg = error.error.message;
+          } else if (error.message) {
+            errorMsg = error.message;
+          } else if (error.statusCode) {
+            errorMsg = `Status ${error.statusCode}: ${error.statusMessage || 'Request failed'}`;
+          } else if (typeof error === 'string') {
+            errorMsg = error;
+          } else {
+            errorMsg = 'Check console for details';
+          }
+        }
+        
+        setCallStatus('Error: ' + errorMsg);
+        setIsCallActive(false);
+      });
+
+      // Start call with assistant
+      console.log('🚀 Starting call with assistant:', VAPI_ASSISTANT_ID);
+      console.log('VAPI instance:', vapi);
+      console.log('VAPI methods:', Object.getOwnPropertyNames(Object.getPrototypeOf(vapi)));
+      setCallStatus('Starting call...');
+      
+      try {
+        const result = await vapi.start(VAPI_ASSISTANT_ID);
+        console.log('📞 Call start result:', result);
+      } catch (startError) {
+        console.error('Start call error:', startError);
+        console.error('Start error type:', typeof startError);
+        console.error('Start error details:', {
+          message: startError?.message,
+          name: startError?.name,
+          stack: startError?.stack,
+          response: startError?.response,
+          status: startError?.status,
+          statusText: startError?.statusText
+        });
+        throw startError;
+      }
+
+    } catch (error) {
+      console.error('❌ Failed to start voice call:', error);
+      console.error('Error name:', error?.name);
+      console.error('Error message:', error?.message);
+      console.error('Error stack:', error?.stack);
+      console.error('Full error:', JSON.stringify(error, Object.getOwnPropertyNames(error), 2));
+      
+      let errorMsg = 'Unknown error';
+      if (error?.message) {
+        errorMsg = error.message;
+      } else if (typeof error === 'string') {
+        errorMsg = error;
+      }
+      
+      setCallStatus('Failed: ' + errorMsg);
+      setIsCallActive(false);
+    }
   };
+
+  const handleEndCall = () => {
+    try {
+      if (vapiRef.current) {
+        vapiRef.current.stop();
+      }
+      setIsCallActive(false);
+      setCallStatus('Call ended');
+      setTimeout(() => setMode(null), 2000);
+    } catch (error) {
+      console.error('Error ending call:', error);
+      setIsCallActive(false);
+      setMode(null);
+    }
+  };
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (vapiRef.current && isCallActive) {
+        vapiRef.current.stop();
+      }
+    };
+  }, [isCallActive]);
 
   if (!isOpen) return null;
 
@@ -111,6 +259,60 @@ export default function ChatModal({ isOpen, onClose, onNavigate }) {
               <p className="text-text-secondary text-sm">Speak directly with our AI assistant</p>
             </button>
           </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (mode === 'voice') {
+    return (
+      <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-6">
+        <div className="bg-bg-card border border-border-card rounded-2xl p-8 max-w-md w-full text-center">
+          <div className="flex justify-between items-start mb-6">
+            <h2 className="text-2xl font-bold">Voice Call</h2>
+            <button onClick={() => { handleEndCall(); onClose(); }} className="text-text-secondary hover:text-text-primary">
+              <X size={24} />
+            </button>
+          </div>
+
+          <div className="my-12">
+            <div className={`w-24 h-24 mx-auto rounded-full flex items-center justify-center mb-6 ${
+              isCallActive ? 'bg-cyan-accent/20 animate-pulse' : 'bg-bg-primary'
+            }`}>
+              <Phone className="text-cyan-accent" size={48} />
+            </div>
+            
+            <p className="text-xl font-semibold mb-2">{callStatus}</p>
+            <p className="text-text-secondary text-sm mb-4">
+              {isCallActive ? 'Speak naturally with our AI assistant' : 'Initializing voice connection...'}
+            </p>
+
+            {/* Debug Info */}
+            <div className="text-xs text-text-tertiary mt-4 p-3 bg-bg-primary rounded-lg text-left">
+              <p>Public Key: {VAPI_PUBLIC_KEY ? '✅ Set' : '❌ Missing'}</p>
+              <p>Assistant ID: {VAPI_ASSISTANT_ID ? '✅ Set' : '❌ Missing'}</p>
+              <p className="mt-2 text-cyan-accent">Check browser console (F12) for detailed logs</p>
+            </div>
+          </div>
+
+          {isCallActive && (
+            <button
+              onClick={handleEndCall}
+              className="bg-red-500 hover:bg-red-600 text-white px-8 py-3 rounded-full font-semibold transition flex items-center gap-2 mx-auto"
+            >
+              <PhoneOff size={20} />
+              End Call
+            </button>
+          )}
+
+          {!isCallActive && callStatus.includes('Failed') && (
+            <button
+              onClick={() => { setMode(null); setCallStatus(''); }}
+              className="bg-cyan-accent text-bg-primary px-8 py-3 rounded-full font-semibold hover:brightness-110 transition"
+            >
+              Try Again
+            </button>
+          )}
         </div>
       </div>
     );

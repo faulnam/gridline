@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { CheckCircle, AlertCircle } from 'lucide-react';
+import { supabase } from '../lib/supabase';
 
 export default function Contact({ onNavigate }) {
   const [formData, setFormData] = useState({
@@ -13,6 +14,7 @@ export default function Contact({ onNavigate }) {
   const [errors, setErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
 
   const validate = () => {
     const newErrors = {};
@@ -52,31 +54,46 @@ export default function Contact({ onNavigate }) {
     }
     
     setLoading(true);
+    setSubmitError(null);
     
-    // Simulate API call - replace with actual backend integration
-    setTimeout(() => {
-      // Save to localStorage for demo purposes
+    try {
+      // Insert data to Supabase
+      const { data, error } = await supabase
+        .from('leads')
+        .insert([
+          {
+            name: formData.name,
+            email: formData.email,
+            whatsapp: formData.whatsapp,
+            business_type: formData.businessType,
+            needs: formData.needs,
+            created_at: new Date().toISOString()
+          }
+        ])
+        .select();
+
+      if (error) {
+        throw error;
+      }
+
+      console.log('Lead submitted successfully:', data);
+      
+      // Also save to localStorage as backup
       const leads = JSON.parse(localStorage.getItem('gridline_leads') || '[]');
-      const newLead = {
+      leads.push({
         ...formData,
         timestamp: new Date().toISOString(),
         id: Date.now()
-      };
-      leads.push(newLead);
+      });
       localStorage.setItem('gridline_leads', JSON.stringify(leads));
-      
-      // In production, this would:
-      // 1. Send data to backend API
-      // 2. Save to database (Supabase/Firebase/etc)
-      // 3. Send email notification to team
-      // 4. Send confirmation email to customer
-      
-      console.log('New lead submitted:', newLead);
-      console.log('Total leads:', leads.length);
       
       setLoading(false);
       setSubmitted(true);
-    }, 1500);
+    } catch (error) {
+      console.error('Error submitting lead:', error);
+      setSubmitError(error.message || 'Failed to submit. Please try again.');
+      setLoading(false);
+    }
   };
 
   const handleChange = (e) => {
@@ -256,6 +273,17 @@ export default function Contact({ onNavigate }) {
           >
             {loading ? 'Submitting...' : 'Submit Project Request →'}
           </button>
+
+          {/* Error Message */}
+          {submitError && (
+            <div className="bg-red-500/10 border border-red-500 rounded-lg p-4 flex items-start gap-3">
+              <AlertCircle className="text-red-500 flex-shrink-0 mt-0.5" size={20} />
+              <div>
+                <p className="text-red-500 font-semibold">Submission Failed</p>
+                <p className="text-red-400 text-sm mt-1">{submitError}</p>
+              </div>
+            </div>
+          )}
         </form>
 
         {/* Additional Info */}
