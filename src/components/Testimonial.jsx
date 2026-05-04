@@ -1,0 +1,74 @@
+import { useState, useEffect } from 'react';
+import { Quote } from 'lucide-react';
+
+const testimonials = [
+  {
+    quote: "Gridline Digital transformed our brand and website—and the results speak for themselves. Their team is strategic, creative, and relentlessly focused on growth.",
+    name: "Sarah Mitchell",
+    role: "CMO, Northline Equipment",
+    avatar: "from-orange-500 to-red-500"
+  },
+  {
+    quote: "Working with Gridline was a game-changer. They didn't just build us a website—they built us a growth engine. Our revenue has tripled since launch.",
+    name: "Michael Chen",
+    role: "Founder, Lumen Lighting",
+    avatar: "from-amber-500 to-orange-500"
+  },
+  {
+    quote: "The rebrand and website exceeded our expectations. Demo requests are up 176%, and our sales team finally has the tools they need to close deals.",
+    name: "Jennifer Park",
+    role: "VP Marketing, Prairie Finance",
+    avatar: "from-cyan-500 to-blue-500"
+  }
+];
+
+export default function Testimonial() {
+  const [current, setCurrent] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrent((prev) => (prev + 1) % testimonials.length);
+    }, 6000);
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <section className="px-6 py-20">
+      <div className="max-w-5xl mx-auto">
+        <div className="bg-bg-card border border-border-card rounded-2xl p-12 md:p-16 relative">
+          {/* Quote Icon */}
+          <Quote className="text-cyan-accent absolute top-8 left-8 opacity-20" size={64} strokeWidth={1.5} />
+
+          {/* Testimonial Content */}
+          <div className="relative z-10">
+            <p className="text-2xl md:text-3xl font-medium leading-relaxed mb-8 text-text-primary">
+              "{testimonials[current].quote}"
+            </p>
+
+            {/* Author */}
+            <div className="flex items-center gap-4">
+              <div className={`w-14 h-14 rounded-full bg-gradient-to-br ${testimonials[current].avatar}`}></div>
+              <div>
+                <div className="font-bold text-lg">{testimonials[current].name}</div>
+                <div className="text-text-secondary text-sm">{testimonials[current].role}</div>
+              </div>
+            </div>
+
+            {/* Dots Navigation */}
+            <div className="flex gap-2 mt-8 justify-end">
+              {testimonials.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setCurrent(idx)}
+                  className={`w-2 h-2 rounded-full transition-all ${
+                    idx === current ? 'bg-cyan-accent w-8' : 'bg-border-card hover:bg-text-secondary'
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
