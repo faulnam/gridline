@@ -22,6 +22,14 @@ export default {
       letterSpacing: {
         'widest': '0.2em',
       },
+      animation: {
+        'float': 'float 6s ease-in-out infinite',
+        'rotate-3d': 'rotate-3d 20s linear infinite',
+      },
+      perspective: {
+        '1000': '1000px',
+        '2000': '2000px',
+      },
     },
   },
   plugins: [],

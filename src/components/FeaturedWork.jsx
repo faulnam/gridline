@@ -1,25 +1,35 @@
 import { ArrowUpRight } from 'lucide-react';
+import { useRef } from 'react';
+import { use3DScroll } from '../hooks/useScrollEffects';
 
 function ProjectCard({ company, industry, headline, description, stats, gradient }) {
+  const cardRef = useRef(null);
+  use3DScroll(cardRef, { rotateX: 5, rotateY: 5, scale: 1.03 });
+
   return (
-    <div className="bg-bg-card border border-border-card rounded-xl overflow-hidden hover:border-cyan-accent hover:shadow-lg hover:shadow-cyan-accent/20 transition-all duration-300 group">
+    <div 
+      ref={cardRef}
+      className="bg-bg-card border border-border-card rounded-xl overflow-hidden hover:border-cyan-accent hover:shadow-lg hover:shadow-cyan-accent/20 transition-all duration-500 group reveal"
+      style={{ transition: 'transform 0.3s ease-out, border-color 0.3s, box-shadow 0.3s' }}
+    >
       {/* Image Placeholder */}
-      <div className={`h-64 bg-gradient-to-br ${gradient} relative`}>
-        <div className="absolute top-4 left-4 bg-bg-primary/80 backdrop-blur-sm px-4 py-2 rounded-lg">
+      <div className={`h-64 bg-gradient-to-br ${gradient} relative overflow-hidden`}>
+        <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-all duration-500"></div>
+        <div className="absolute top-4 left-4 glass px-4 py-2 rounded-lg backdrop-blur-md">
           <div className="font-bold text-sm">{company}</div>
           <div className="text-xs text-text-secondary">{industry}</div>
         </div>
       </div>
 
       {/* Content */}
-      <div className="p-8 bg-bg-primary">
-        <h3 className="text-2xl font-bold mb-3 group-hover:text-cyan-accent transition">{headline}</h3>
+      <div className="p-8 bg-bg-primary relative">
+        <h3 className="text-2xl font-bold mb-3 group-hover:text-cyan-accent transition-colors duration-300">{headline}</h3>
         <p className="text-text-secondary text-sm leading-relaxed mb-6">{description}</p>
 
         {/* Stats */}
         <div className="grid grid-cols-3 gap-4 pt-6 border-t border-border-card">
           {stats.map((stat, idx) => (
-            <div key={idx}>
+            <div key={idx} className="transform group-hover:scale-105 transition-transform duration-300" style={{ transitionDelay: `${idx * 50}ms` }}>
               <div className="text-cyan-accent font-bold text-lg">{stat.value}</div>
               <div className="text-text-secondary text-xs mt-1">{stat.label}</div>
             </div>
@@ -32,19 +42,25 @@ function ProjectCard({ company, industry, headline, description, stats, gradient
 
 export default function FeaturedWork({ onNavigate }) {
   return (
-    <section className="px-6 py-20 bg-bg-card/30">
-      <div className="max-w-7xl mx-auto">
+    <section className="px-6 py-20 bg-bg-card/30 relative overflow-hidden">
+      {/* Animated background */}
+      <div className="absolute inset-0 opacity-30">
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-cyan-accent/10 rounded-full blur-3xl animate-float"></div>
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-cyan-accent/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '3s' }}></div>
+      </div>
+      
+      <div className="max-w-7xl mx-auto relative z-10">
         {/* Header */}
-        <div className="flex items-end justify-between mb-12">
+        <div className="flex items-end justify-between mb-12 reveal">
           <div>
             <div className="text-cyan-accent text-xs font-bold tracking-widest uppercase mb-4">FEATURED WORK</div>
             <h2 className="text-4xl md:text-5xl font-bold">Real results for real businesses.</h2>
           </div>
           <button 
             onClick={() => onNavigate('portfolio')}
-            className="text-cyan-accent hover:underline flex items-center gap-2 text-sm font-semibold"
+            className="text-cyan-accent hover:underline flex items-center gap-2 text-sm font-semibold group transition-all duration-300"
           >
-            View all work <ArrowUpRight size={16} />
+            View all work <ArrowUpRight size={16} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform duration-300" />
           </button>
         </div>
 

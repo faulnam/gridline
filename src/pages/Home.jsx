@@ -1,8 +1,7 @@
 import Hero from '../components/Hero';
-import StatsBar from '../components/StatsBar';
 import Services from '../components/Services';
 import FeaturedWork from '../components/FeaturedWork';
-import Process from '../components/Process';
+import PricingPreview from '../components/PricingPreview';
 import Testimonial from '../components/Testimonial';
 import CTA from '../components/CTA';
 
@@ -11,10 +10,9 @@ export default function Home({ onNavigate, onOpenChat }) {
     <div>
       <Hero onNavigate={onNavigate} onOpenChat={onOpenChat} />
       <Services />
-      <Process />
       <FeaturedWork onNavigate={onNavigate} />
-      <StatsBar />
       <Testimonial />
+      <PricingPreview onNavigate={onNavigate} />
       <CTA onNavigate={onNavigate} />
     </div>
   );

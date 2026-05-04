@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ChatModal from './components/ChatModal';
@@ -11,6 +11,26 @@ import { MessageCircle } from 'lucide-react';
 function App() {
   const [currentPage, setCurrentPage] = useState('home');
   const [chatOpen, setChatOpen] = useState(false);
+
+  useEffect(() => {
+    // Add reveal animation on scroll
+    const revealElements = document.querySelectorAll('.reveal');
+    
+    const revealObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('active');
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
+    );
+
+    revealElements.forEach(el => revealObserver.observe(el));
+
+    return () => revealObserver.disconnect();
+  }, [currentPage]);
 
   const handleNavigate = (page) => {
     setCurrentPage(page);
@@ -46,7 +66,7 @@ function App() {
       {!chatOpen && (
         <button
           onClick={() => setChatOpen(true)}
-          className="fixed bottom-8 right-8 bg-cyan-accent text-bg-primary w-16 h-16 rounded-full flex items-center justify-center shadow-lg hover:shadow-cyan-accent/50 hover:scale-110 transition-all z-40"
+          className="fixed bottom-8 right-8 bg-cyan-accent text-bg-primary w-16 h-16 rounded-full flex items-center justify-center shadow-lg hover:shadow-cyan-accent/50 hover:scale-110 transition-all duration-300 z-40 animate-float"
           aria-label="Open chat"
         >
           <MessageCircle size={28} />

@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Quote } from 'lucide-react';
+import { use3DScroll } from '../hooks/useScrollEffects';
 
 const testimonials = [
   {
@@ -24,6 +25,9 @@ const testimonials = [
 
 export default function Testimonial() {
   const [current, setCurrent] = useState(0);
+  const cardRef = useRef(null);
+  
+  use3DScroll(cardRef, { rotateX: 3, rotateY: 3, scale: 1.01 });
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -33,21 +37,29 @@ export default function Testimonial() {
   }, []);
 
   return (
-    <section className="px-6 py-20">
-      <div className="max-w-5xl mx-auto">
-        <div className="bg-bg-card border border-border-card rounded-2xl p-12 md:p-16 relative">
+    <section className="px-6 py-20 relative overflow-hidden">
+      {/* Floating elements */}
+      <div className="absolute top-1/4 left-10 w-32 h-32 bg-cyan-accent/5 rounded-full blur-2xl animate-float"></div>
+      <div className="absolute bottom-1/4 right-10 w-40 h-40 bg-cyan-accent/5 rounded-full blur-2xl animate-float" style={{ animationDelay: '2s' }}></div>
+      
+      <div className="max-w-5xl mx-auto relative z-10">
+        <div 
+          ref={cardRef}
+          className="glass rounded-2xl p-12 md:p-16 relative reveal border border-border-card"
+          style={{ transition: 'transform 0.3s ease-out' }}
+        >
           {/* Quote Icon */}
           <Quote className="text-cyan-accent absolute top-8 left-8 opacity-20" size={64} strokeWidth={1.5} />
 
           {/* Testimonial Content */}
           <div className="relative z-10">
-            <p className="text-2xl md:text-3xl font-medium leading-relaxed mb-8 text-text-primary">
+            <p className="text-2xl md:text-3xl font-medium leading-relaxed mb-8 text-text-primary transition-all duration-500">
               "{testimonials[current].quote}"
             </p>
 
             {/* Author */}
             <div className="flex items-center gap-4">
-              <div className={`w-14 h-14 rounded-full bg-gradient-to-br ${testimonials[current].avatar}`}></div>
+              <div className={`w-14 h-14 rounded-full bg-gradient-to-br ${testimonials[current].avatar} transition-all duration-500`}></div>
               <div>
                 <div className="font-bold text-lg">{testimonials[current].name}</div>
                 <div className="text-text-secondary text-sm">{testimonials[current].role}</div>
@@ -60,8 +72,8 @@ export default function Testimonial() {
                 <button
                   key={idx}
                   onClick={() => setCurrent(idx)}
-                  className={`w-2 h-2 rounded-full transition-all ${
-                    idx === current ? 'bg-cyan-accent w-8' : 'bg-border-card hover:bg-text-secondary'
+                  className={`h-2 rounded-full transition-all duration-300 ${
+                    idx === current ? 'bg-cyan-accent w-8' : 'bg-border-card hover:bg-text-secondary w-2'
                   }`}
                 />
               ))}
