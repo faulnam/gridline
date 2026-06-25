@@ -1,6 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
 import { Quote } from 'lucide-react';
-import { use3DScroll } from '../hooks/useScrollEffects';
 
 const testimonials = [
   {
@@ -20,65 +18,75 @@ const testimonials = [
     name: "Jennifer Park",
     role: "VP Marketing, Prairie Finance",
     avatar: "from-cyan-500 to-blue-500"
+  },
+  {
+    quote: "Their attention to detail and design is unparalleled. They delivered exactly what we needed, on time and on budget.",
+    name: "David Kim",
+    role: "CEO, TechNova",
+    avatar: "from-purple-500 to-pink-500"
+  },
+  {
+    quote: "We've seen a 50% increase in user engagement since launching the new site. The team is fantastic to work with.",
+    name: "Emma Wilson",
+    role: "Product Manager, GrowthFlow",
+    avatar: "from-emerald-500 to-teal-500"
   }
 ];
 
 export default function Testimonial() {
-  const [current, setCurrent] = useState(0);
-  const cardRef = useRef(null);
-  
-  use3DScroll(cardRef, { rotateX: 3, rotateY: 3, scale: 1.01 });
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % testimonials.length);
-    }, 6000);
-    return () => clearInterval(timer);
-  }, []);
+  const marqueeItems = [...testimonials, ...testimonials];
 
   return (
-    <section className="px-6 py-20 relative overflow-hidden">
+    <section className="py-24 relative overflow-hidden bg-bg-primary">
+      <style>{`
+        @keyframes scrollLeft {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(calc(-50% - 12px)); }
+        }
+        .animate-marquee {
+          animation: scrollLeft 30s linear infinite;
+          width: max-content;
+        }
+        .animate-marquee:hover {
+          animation-play-state: paused;
+        }
+      `}</style>
+
       {/* Floating elements */}
-      <div className="absolute top-1/4 left-10 w-32 h-32 bg-cyan-accent/5 rounded-full blur-2xl animate-float"></div>
-      <div className="absolute bottom-1/4 right-10 w-40 h-40 bg-cyan-accent/5 rounded-full blur-2xl animate-float" style={{ animationDelay: '2s' }}></div>
+      <div className="absolute top-1/4 left-10 w-32 h-32 bg-cyan-accent/5 rounded-full blur-2xl animate-float pointer-events-none"></div>
+      <div className="absolute bottom-1/4 right-10 w-40 h-40 bg-cyan-accent/5 rounded-full blur-2xl animate-float pointer-events-none" style={{ animationDelay: '2s' }}></div>
       
-      <div className="max-w-5xl mx-auto relative z-10">
-        <div 
-          ref={cardRef}
-          className="glass rounded-2xl p-12 md:p-16 relative reveal border border-border-card"
-          style={{ transition: 'transform 0.3s ease-out' }}
-        >
-          {/* Quote Icon */}
-          <Quote className="text-cyan-accent absolute top-8 left-8 opacity-20" size={64} strokeWidth={1.5} />
+      <div className="max-w-7xl mx-auto px-6 relative z-10 mb-16 text-center reveal">
+        <h2 className="text-4xl md:text-5xl font-bold mb-4">What Our <span className="text-cyan-accent text-glow font-style-italic">Clients Say</span></h2>
+      </div>
 
-          {/* Testimonial Content */}
-          <div className="relative z-10">
-            <p className="text-2xl md:text-3xl font-medium leading-relaxed mb-8 text-text-primary transition-all duration-500">
-              "{testimonials[current].quote}"
-            </p>
+      <div className="relative w-full overflow-hidden flex">
+        <div className="flex animate-marquee gap-6 px-3">
+          {marqueeItems.map((t, idx) => (
+            <div 
+              key={idx}
+              className="bg-bg-card rounded-2xl p-8 relative flex-shrink-0 w-[350px] md:w-[450px] border border-border-card hover:border-cyan-accent/50 hover:shadow-lg hover:shadow-cyan-accent/10 transition-all group"
+            >
+              {/* Quote Icon */}
+              <Quote className="text-cyan-accent absolute top-8 right-8 opacity-20 group-hover:opacity-40 transition-opacity" size={40} strokeWidth={1.5} />
 
-            {/* Author */}
-            <div className="flex items-center gap-4">
-              <div className={`w-14 h-14 rounded-full bg-gradient-to-br ${testimonials[current].avatar} transition-all duration-500`}></div>
-              <div>
-                <div className="font-bold text-lg">{testimonials[current].name}</div>
-                <div className="text-text-secondary text-sm">{testimonials[current].role}</div>
+              {/* Testimonial Content */}
+              <div className="relative z-10 h-full flex flex-col">
+                <p className="text-lg font-medium leading-relaxed mb-8 text-text-primary flex-grow pr-8">
+                  "{t.quote}"
+                </p>
+
+                {/* Author */}
+                <div className="flex items-center gap-4 mt-auto">
+                  <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${t.avatar}`}></div>
+                  <div>
+                    <div className="font-bold text-sm">{t.name}</div>
+                    <div className="text-text-secondary text-xs">{t.role}</div>
+                  </div>
+                </div>
               </div>
             </div>
-
-            {/* Dots Navigation */}
-            <div className="flex gap-2 mt-8 justify-end">
-              {testimonials.map((_, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setCurrent(idx)}
-                  className={`h-2 rounded-full transition-all duration-300 ${
-                    idx === current ? 'bg-cyan-accent w-8' : 'bg-border-card hover:bg-text-secondary w-2'
-                  }`}
-                />
-              ))}
-            </div>
-          </div>
+          ))}
         </div>
       </div>
     </section>
