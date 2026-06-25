@@ -1,5 +1,6 @@
-import { ArrowLeft, ArrowUpRight } from 'lucide-react';
+import { ArrowLeft, ArrowUpRight, Laptop, ArrowRight } from 'lucide-react';
 import { useState } from 'react';
+import SEO from '../components/SEO';
 
 const projects = [
   {
@@ -123,6 +124,11 @@ function ProjectCard({ project, onClick }) {
 function ProjectDetail({ project, onBack, onContact, onOpenChat }) {
   return (
     <div className="min-h-screen pt-24 pb-20 px-6">
+      <SEO 
+        title={`${project.company} - Portfolio | Gridline`}
+        description={project.description}
+        url={`https://gridlinedigital.site/portfolio`}
+      />
       <div className="max-w-5xl mx-auto">
         <button 
           onClick={onBack}
@@ -207,6 +213,11 @@ export default function Portfolio({ onNavigate, onOpenChat }) {
 
   return (
     <div className="min-h-screen pt-24 pb-20 px-6">
+      <SEO 
+        title="Portfolio Pembuatan Website & Aplikasi - Gridline"
+        description="Lihat hasil kerja terbaik kami dalam merancang antarmuka yang memukau dan sistem yang andal untuk klien kami."
+        url="https://gridlinedigital.site/portfolio"
+      />
       <div className="max-w-7xl mx-auto">
         <div className="mb-12">
           <div className="text-cyan-accent text-xs font-bold tracking-widest uppercase mb-4">OUR WORK</div>

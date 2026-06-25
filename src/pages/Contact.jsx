@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { CheckCircle, AlertCircle } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import SEO from '../components/SEO';
 
 export default function Contact({ onNavigate }) {
   const [formData, setFormData] = useState({
@@ -108,6 +109,11 @@ export default function Contact({ onNavigate }) {
   if (submitted) {
     return (
       <div className="min-h-screen pt-24 pb-20 px-6 flex items-center justify-center">
+        <SEO 
+          title="Terima Kasih - Gridline"
+          description="Pesan Anda telah kami terima."
+          url="https://gridlinedigital.site/contact"
+        />
         <div className="max-w-2xl w-full text-center">
           <CheckCircle className="text-cyan-accent mx-auto mb-6" size={64} />
           <h1 className="text-4xl font-bold mb-4">Thank you! We'll contact you soon.</h1>
@@ -135,6 +141,11 @@ export default function Contact({ onNavigate }) {
 
   return (
     <div className="min-h-screen pt-24 pb-20 px-6">
+      <SEO 
+        title="Hubungi Kami | Konsultasi Proyek Digital - Gridline"
+        description="Punya rencana besar untuk bisnis Anda? Konsultasikan pembuatan website atau aplikasi Anda bersama tim ahli Gridline."
+        url="https://gridlinedigital.site/contact"
+      />
       <div className="max-w-3xl mx-auto">
         {/* Header */}
         <div className="mb-12">

@@ -1,4 +1,5 @@
 import { Check, ArrowRight } from 'lucide-react';
+import SEO from '../components/SEO';
 
 function PricingCard({ name, price, description, features, highlighted, onGetStarted, onLetsTalk }) {
   return (
@@ -53,6 +54,11 @@ function PricingCard({ name, price, description, features, highlighted, onGetSta
 export default function Pricing({ onNavigate, onOpenChat }) {
   return (
     <div className="min-h-screen pt-24 pb-20 px-6">
+      <SEO 
+        title="Harga Pembuatan Website & Aplikasi - Gridline"
+        description="Temukan paket layanan digital yang paling sesuai untuk kebutuhan startup, bisnis kecil, maupun perusahaan besar."
+        url="https://gridlinedigital.site/pricing"
+      />
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-16">
