@@ -25,6 +25,13 @@ export default {
       animation: {
         'float': 'float 6s ease-in-out infinite',
         'rotate-3d': 'rotate-3d 20s linear infinite',
+        'slide-up': 'slide-up 0.3s ease-out',
+      },
+      keyframes: {
+        'slide-up': {
+          '0%': { transform: 'translateY(20px)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
       },
       perspective: {
         '1000': '1000px',

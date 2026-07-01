@@ -1,6 +1,6 @@
 import { Linkedin, Instagram, Facebook, Twitter } from 'lucide-react';
 
-export default function Footer() {
+export default function Footer({ onNavigate, onOpenChat }) {
   return (
     <footer className="bg-bg-primary border-t border-border-card px-6 py-16">
       <div className="max-w-7xl mx-auto">
@@ -23,11 +23,11 @@ export default function Footer() {
           <div>
             <h4 className="font-bold text-sm mb-4">Quick Links</h4>
             <ul className="space-y-3">
-              <li><button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-text-secondary hover:text-cyan-accent text-sm transition">Home</button></li>
-              <li><button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-text-secondary hover:text-cyan-accent text-sm transition">Portfolio</button></li>
-              <li><button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-text-secondary hover:text-cyan-accent text-sm transition">Pricing</button></li>
-              <li><button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-text-secondary hover:text-cyan-accent text-sm transition">Start Project</button></li>
-              <li><button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-text-secondary hover:text-cyan-accent text-sm transition">Let's Talk</button></li>
+              <li><button onClick={() => onNavigate('home')} className="text-text-secondary hover:text-cyan-accent text-sm transition">Home</button></li>
+              <li><button onClick={() => onNavigate('portfolio')} className="text-text-secondary hover:text-cyan-accent text-sm transition">Portfolio</button></li>
+              <li><button onClick={() => onNavigate('pricing')} className="text-text-secondary hover:text-cyan-accent text-sm transition">Pricing</button></li>
+              <li><button onClick={() => onNavigate('contact')} className="text-text-secondary hover:text-cyan-accent text-sm transition">Start Project</button></li>
+              <li><button onClick={() => onOpenChat()} className="text-text-secondary hover:text-cyan-accent text-sm transition">Let's Talk</button></li>
             </ul>
           </div>
 

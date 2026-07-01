@@ -35,12 +35,12 @@ export default function Home({ onNavigate, onOpenChat }) {
         structuredData={structuredData}
       />
       <Hero onNavigate={onNavigate} onOpenChat={onOpenChat} />
-      <Services />
+      <Services onNavigate={onNavigate} />
       <FeaturedWork onNavigate={onNavigate} />
       <Testimonial />
+      <FAQ onNavigate={onNavigate} />
       <PricingPreview onNavigate={onNavigate} />
       <CTA onNavigate={onNavigate} />
-      <FAQ onNavigate={onNavigate} />
     </div>
   );
 }

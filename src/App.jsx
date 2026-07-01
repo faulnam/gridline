@@ -6,6 +6,7 @@ import Home from './pages/Home';
 import Portfolio from './pages/Portfolio';
 import Pricing from './pages/Pricing';
 import Contact from './pages/Contact';
+import Services from './pages/Services';
 import { MessageCircle } from 'lucide-react';
 
 function App() {
@@ -41,6 +42,8 @@ function App() {
     switch (currentPage) {
       case 'home':
         return <Home onNavigate={handleNavigate} onOpenChat={() => setChatOpen(true)} />;
+      case 'services':
+        return <Services onNavigate={handleNavigate} onOpenChat={() => setChatOpen(true)} />;
       case 'portfolio':
         return <Portfolio onNavigate={handleNavigate} onOpenChat={() => setChatOpen(true)} />;
       case 'pricing':
@@ -54,13 +57,13 @@ function App() {
 
   return (
     <div className="min-h-screen">
-      <Navbar onNavigate={handleNavigate} />
+      <Navbar onNavigate={handleNavigate} currentPage={currentPage} onOpenChat={() => setChatOpen(true)} />
       
       <main>
         {renderPage()}
       </main>
 
-      <Footer />
+      <Footer onNavigate={handleNavigate} onOpenChat={() => setChatOpen(true)} />
 
       {/* Floating Chat Button */}
       {!chatOpen && (

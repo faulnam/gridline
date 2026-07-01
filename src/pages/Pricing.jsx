@@ -1,5 +1,253 @@
+import { useState } from 'react';
 import { Check, ArrowRight } from 'lucide-react';
 import SEO from '../components/SEO';
+import FAQ from '../components/FAQ';
+
+const CATEGORIES = [
+  "Website Design",
+  "Web Development",
+  "E-Commerce",
+  "SEO Optimization",
+  "Digital Marketing",
+  "Brand Identity"
+];
+
+const PRICING_DATA = {
+  "Website Design": [
+    {
+      name: "Basic",
+      price: "Rp 1.500.000",
+      description: "Sempurna untuk personal brand atau landing page produk tunggal.",
+      features: [
+        "1 Halaman Landing Page",
+        "Desain Responsif",
+        "Form Kontak",
+        "Optimasi Kecepatan Dasar",
+        "Revisi 2 Kali"
+      ]
+    },
+    {
+      name: "Professional",
+      price: "Rp 3.500.000",
+      description: "Company profile profesional untuk bisnis yang sedang berkembang.",
+      features: [
+        "Hingga 5 Halaman Web",
+        "Desain UI/UX Kustom",
+        "Integrasi Media Sosial",
+        "Optimasi SEO Dasar",
+        "Dukungan Teknis 1 Bulan"
+      ],
+      highlighted: true
+    },
+    {
+      name: "Enterprise",
+      price: "Custom",
+      description: "Solusi desain spesifik dan tak terbatas untuk perusahaan besar.",
+      features: [
+        "Halaman Tak Terbatas",
+        "Prototyping & Wireframing",
+        "Animasi Kustom (Micro-interactions)",
+        "Sistem Desain (Design System)",
+        "Prioritas Dukungan VIP"
+      ]
+    }
+  ],
+  "Web Development": [
+    {
+      name: "Starter",
+      price: "Rp 2.500.000",
+      description: "Pengembangan website statis dengan performa tinggi.",
+      features: [
+        "Website Statis Modern",
+        "Hosting & Domain 1 Tahun",
+        "Keamanan SSL",
+        "Setup Google Analytics",
+        "Maintenance Dasar"
+      ]
+    },
+    {
+      name: "Business",
+      price: "Rp 5.500.000",
+      description: "Website dinamis dengan sistem manajemen konten (CMS).",
+      features: [
+        "Website Dinamis (CMS)",
+        "Panel Admin Kustom",
+        "Integrasi API Dasar",
+        "Optimasi Database",
+        "Maintenance 3 Bulan"
+      ],
+      highlighted: true
+    },
+    {
+      name: "Custom WebApp",
+      price: "Mulai Rp 10.000.000",
+      description: "Pengembangan web application kompleks sesuai kebutuhan.",
+      features: [
+        "Arsitektur Full-Stack",
+        "Integrasi API Pihak Ketiga",
+        "Manajemen Pengguna Kompleks",
+        "Infrastruktur Cloud Berjenjang",
+        "SLA & Dukungan Penuh"
+      ]
+    }
+  ],
+  "E-Commerce": [
+    {
+      name: "Basic Store",
+      price: "Rp 4.000.000",
+      description: "Toko online standar untuk mulai berjualan digital.",
+      features: [
+        "Katalog Hingga 50 Produk",
+        "Integrasi Payment Gateway Dasar",
+        "Keranjang Belanja",
+        "Manajemen Pesanan Dasar",
+        "Desain Responsif"
+      ]
+    },
+    {
+      name: "Pro Store",
+      price: "Rp 7.500.000",
+      description: "Platform e-commerce lengkap dengan fitur analitik.",
+      features: [
+        "Katalog Produk Tak Terbatas",
+        "Multi-Payment & Logistik Otomatis",
+        "Fitur Diskon & Kupon",
+        "Sistem Inventaris",
+        "Integrasi Pixel (Meta/Google)"
+      ],
+      highlighted: true
+    },
+    {
+      name: "Marketplace",
+      price: "Custom",
+      description: "Solusi e-commerce skala besar atau sistem multi-vendor.",
+      features: [
+        "Sistem Multi-Vendor",
+        "Aplikasi Mobile E-Commerce",
+        "Loyalty & Reward Program",
+        "Analitik Penjualan Lanjut",
+        "Arsitektur Skala Besar"
+      ]
+    }
+  ],
+  "SEO Optimization": [
+    {
+      name: "Audit & Fix",
+      price: "Rp 1.000.000",
+      description: "Pemeriksaan dan perbaikan dasar teknis SEO website Anda.",
+      features: [
+        "Audit Teknis SEO Menyeluruh",
+        "Perbaikan Meta Tags & Title",
+        "Optimasi Kecepatan Laman",
+        "Sitemap & Robots.txt Setup",
+        "Laporan Audit 1 Kali"
+      ]
+    },
+    {
+      name: "Growth",
+      price: "Rp 2.500.000/bln",
+      description: "Optimasi berkelanjutan untuk mendominasi kata kunci.",
+      features: [
+        "Riset Keyword Mendalam",
+        "Optimasi On-Page & Off-Page",
+        "Pembuatan 4 Artikel SEO/Bulan",
+        "Backlink Building Organik",
+        "Laporan Peringkat Bulanan"
+      ],
+      highlighted: true
+    },
+    {
+      name: "Dominance",
+      price: "Rp 5.000.000/bln",
+      description: "Strategi SEO agresif untuk ceruk pasar kompetitif.",
+      features: [
+        "Segala Fitur Paket Growth",
+        "Pembuatan 10 Artikel SEO/Bulan",
+        "Premium Guest Post & PR",
+        "Audit Kompetitor Lanjut",
+        "Konsultasi Strategi Mingguan"
+      ]
+    }
+  ],
+  "Digital Marketing": [
+    {
+      name: "Social Media",
+      price: "Rp 1.500.000/bln",
+      description: "Manajemen dan pertumbuhan media sosial organik.",
+      features: [
+        "12 Konten Feed/Bulan",
+        "Desain Grafis Profesional",
+        "Copywriting & Hashtag",
+        "Penjadwalan Posting",
+        "Laporan Engagement"
+      ]
+    },
+    {
+      name: "Performance Ads",
+      price: "Rp 3.500.000/bln",
+      description: "Kampanye iklan berbayar (Ads) yang berfokus pada konversi.",
+      features: [
+        "Setup Google Ads & Meta Ads",
+        "A/B Testing Iklan",
+        "Retargeting Audience",
+        "Manajemen Anggaran Optimal",
+        "Laporan ROAS Bulanan"
+      ],
+      highlighted: true
+    },
+    {
+      name: "Omnichannel",
+      price: "Custom",
+      description: "Integrasi seluruh saluran pemasaran digital Anda.",
+      features: [
+        "Social Media + Performance Ads",
+        "Email Marketing Automation",
+        "Influencer/KOL Outreach",
+        "Strategi Kampanye 360 Derajat",
+        "Dashboard Analitik Terpusat"
+      ]
+    }
+  ],
+  "Brand Identity": [
+    {
+      name: "Logo Pack",
+      price: "Rp 1.000.000",
+      description: "Desain logo profesional untuk identitas awal bisnis Anda.",
+      features: [
+        "2 Konsep Logo Unik",
+        "Revisi 3 Kali",
+        "File Master Vector (AI/EPS)",
+        "Palet Warna Dasar",
+        "Tipografi Primer"
+      ]
+    },
+    {
+      name: "Brand Guideline",
+      price: "Rp 2.500.000",
+      description: "Buku pedoman identitas visual lengkap perusahaan.",
+      features: [
+        "Segala Fitur Logo Pack",
+        "Buku Panduan Brand (PDF)",
+        "Aturan Penggunaan Logo",
+        "Desain Kartu Nama & Kop Surat",
+        "Desain Template Sosmed"
+      ],
+      highlighted: true
+    },
+    {
+      name: "Full Rebrand",
+      price: "Mulai Rp 5.000.000",
+      description: "Perombakan total atau penciptaan identitas visual dari nol.",
+      features: [
+        "Riset & Strategi Brand",
+        "Identitas Visual Menyeluruh",
+        "Desain Kemasan (Packaging)",
+        "Desain Merchandise/Seragam",
+        "Panduan Suara (Tone of Voice)"
+      ]
+    }
+  ]
+};
 
 function PricingCard({ name, price, description, features, highlighted, onGetStarted, onLetsTalk }) {
   return (
@@ -12,10 +260,10 @@ function PricingCard({ name, price, description, features, highlighted, onGetSta
       
       <h3 className="text-2xl font-bold mb-2">{name}</h3>
       <div className="mb-4">
-        {price === 'Custom' ? (
-          <div className="text-4xl font-bold text-cyan-accent">Custom</div>
+        {price.toLowerCase() === 'custom' || price.startsWith('Mulai') ? (
+          <div className="text-3xl font-bold text-cyan-accent">{price}</div>
         ) : (
-          <div className="text-4xl font-bold text-cyan-accent">{price}<span className="text-lg text-text-secondary">/month</span></div>
+          <div className="text-3xl font-bold text-cyan-accent">{price}</div>
         )}
       </div>
       <p className="text-text-secondary text-sm mb-8">{description}</p>
@@ -52,113 +300,62 @@ function PricingCard({ name, price, description, features, highlighted, onGetSta
 }
 
 export default function Pricing({ onNavigate, onOpenChat }) {
+  const [activeCategory, setActiveCategory] = useState(CATEGORIES[0]);
+  
+  const currentPricing = PRICING_DATA[activeCategory] || PRICING_DATA["Website Design"];
+
   return (
-    <div className="min-h-screen pt-24 pb-20 px-6">
+    <div className="min-h-screen pt-24 pb-0">
       <SEO 
-        title="Harga Pembuatan Website & Aplikasi - Gridline"
-        description="Temukan paket layanan digital yang paling sesuai untuk kebutuhan startup, bisnis kecil, maupun perusahaan besar."
+        title="Harga & Paket Layanan Digital - Gridline"
+        description="Temukan paket layanan digital yang paling sesuai untuk kebutuhan startup, bisnis kecil, maupun perusahaan besar. Transparan dan kompetitif."
         url="https://gridlinedigital.site/pricing"
       />
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto px-6">
         {/* Header */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-10">
           <div className="text-cyan-accent text-xs font-bold tracking-widest uppercase mb-4">PRICING</div>
-          <h1 className="text-5xl md:text-6xl font-bold mb-6">Simple, transparent pricing.</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-6">Simple, transparent pricing.</h1>
           <p className="text-text-tertiary text-lg max-w-3xl mx-auto">
-            Choose the plan that fits your business. All plans include our proven process, dedicated support, and a focus on measurable results.
+            Pilih paket yang paling sesuai dengan target bisnis Anda. Semua paket dirancang dengan fokus pada kualitas dan hasil (ROI) yang terukur.
           </p>
         </div>
 
+        {/* Category Tabs */}
+        <div className="flex flex-wrap items-center justify-center gap-2 mb-12">
+          {CATEGORIES.map(category => (
+            <button
+              key={category}
+              onClick={() => setActiveCategory(category)}
+              className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300 border ${
+                activeCategory === category
+                  ? 'bg-cyan-accent text-bg-primary border-cyan-accent shadow-[0_0_15px_rgba(0,200,255,0.3)]'
+                  : 'bg-bg-card text-text-secondary border-border-card hover:border-text-secondary hover:text-white'
+              }`}
+            >
+              {category}
+            </button>
+          ))}
+        </div>
+
         {/* Pricing Cards */}
-        <div className="grid md:grid-cols-3 gap-8 mb-16">
-          <PricingCard 
-            name="Starter"
-            price="$2,500"
-            description="Perfect for startups and small businesses looking to establish their digital presence."
-            features={[
-              "Brand identity design",
-              "5-page website design & development",
-              "Mobile responsive",
-              "Basic SEO setup",
-              "1 month of support",
-              "Analytics integration"
-            ]}
-            onGetStarted={() => onNavigate('contact')}
-            onLetsTalk={onOpenChat}
-          />
-
-          <PricingCard 
-            name="Business"
-            price="$5,000"
-            description="For growing businesses ready to scale with advanced marketing and optimization."
-            features={[
-              "Everything in Starter",
-              "10-page website with CMS",
-              "Advanced SEO strategy",
-              "Conversion optimization",
-              "Paid media setup (Google/Meta)",
-              "3 months of support & optimization",
-              "Monthly performance reports"
-            ]}
-            highlighted
-            onGetStarted={() => onNavigate('contact')}
-            onLetsTalk={onOpenChat}
-          />
-
-          <PricingCard 
-            name="Enterprise"
-            price="Custom"
-            description="Tailored solutions for established brands with complex needs and ambitious goals."
-            features={[
-              "Everything in Business",
-              "Custom website (unlimited pages)",
-              "Full-scale digital strategy",
-              "Multi-channel campaigns",
-              "Dedicated account manager",
-              "Ongoing optimization & scaling",
-              "Priority support",
-              "Custom integrations & automation"
-            ]}
-            onGetStarted={() => onNavigate('contact')}
-            onLetsTalk={onOpenChat}
-          />
-        </div>
-
-        {/* FAQ Section */}
-        <div className="max-w-3xl mx-auto">
-          <h2 className="text-3xl font-bold mb-8 text-center">Frequently Asked Questions</h2>
-          <div className="space-y-6">
-            <div className="bg-bg-card border border-border-card rounded-xl p-6">
-              <h3 className="font-bold mb-2">What's included in the monthly price?</h3>
-              <p className="text-text-secondary text-sm">All plans include design, development, and ongoing support. Business and Enterprise plans also include optimization, reporting, and campaign management.</p>
-            </div>
-            <div className="bg-bg-card border border-border-card rounded-xl p-6">
-              <h3 className="font-bold mb-2">Can I upgrade or downgrade my plan?</h3>
-              <p className="text-text-secondary text-sm">Yes! You can change your plan at any time. We'll work with you to ensure a smooth transition.</p>
-            </div>
-            <div className="bg-bg-card border border-border-card rounded-xl p-6">
-              <h3 className="font-bold mb-2">Do you offer custom packages?</h3>
-              <p className="text-text-secondary text-sm">Absolutely. If none of our standard plans fit your needs, we'll create a custom package tailored to your goals and budget.</p>
-            </div>
-            <div className="bg-bg-card border border-border-card rounded-xl p-6">
-              <h3 className="font-bold mb-2">What's your refund policy?</h3>
-              <p className="text-text-secondary text-sm">We offer a 30-day satisfaction guarantee. If you're not happy with our work, we'll make it right or provide a full refund.</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Bottom CTA */}
-        <div className="mt-16 text-center">
-          <h3 className="text-2xl font-bold mb-4">Still have questions?</h3>
-          <p className="text-text-tertiary mb-6">Let's talk about your project and find the right solution for you.</p>
-          <button 
-            onClick={onOpenChat}
-            className="bg-cyan-accent text-bg-primary px-8 py-4 rounded-full font-bold hover:brightness-110 hover:shadow-lg hover:shadow-cyan-accent/50 transition"
-          >
-            Let's Talk →
-          </button>
+        <div className="grid md:grid-cols-3 gap-8 mb-20">
+          {currentPricing.map((pkg, idx) => (
+            <PricingCard 
+              key={idx}
+              name={pkg.name}
+              price={pkg.price}
+              description={pkg.description}
+              features={pkg.features}
+              highlighted={pkg.highlighted}
+              onGetStarted={() => onNavigate('contact')}
+              onLetsTalk={onOpenChat}
+            />
+          ))}
         </div>
       </div>
+      
+      
     </div>
   );
 }

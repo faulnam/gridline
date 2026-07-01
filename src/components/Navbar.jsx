@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Menu, X, ArrowUpRight } from 'lucide-react';
 
-export default function Navbar({ onNavigate }) {
+export default function Navbar({ onNavigate, currentPage, onOpenChat }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -33,16 +33,16 @@ export default function Navbar({ onNavigate }) {
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center gap-1">
-            <button onClick={() => onNavigate('home')} className="text-sm px-5 py-2.5 rounded-full bg-white/10 text-white font-medium transition-colors">Home</button>
-            <button onClick={() => onNavigate('services')} className="text-sm px-5 py-2.5 rounded-full text-text-secondary hover:text-white hover:bg-white/5 transition-colors">Services</button>
-            <button onClick={() => onNavigate('portfolio')} className="text-sm px-5 py-2.5 rounded-full text-text-secondary hover:text-white hover:bg-white/5 transition-colors">Portfolio</button>
-            <button onClick={() => onNavigate('pricing')} className="text-sm px-5 py-2.5 rounded-full text-text-secondary hover:text-white hover:bg-white/5 transition-colors">Pricing</button>
-            <button onClick={() => onNavigate('contact')} className="text-sm px-5 py-2.5 rounded-full text-text-secondary hover:text-white hover:bg-white/5 transition-colors">Contact</button>
+            <button onClick={() => onNavigate('home')} className={`text-sm px-5 py-2.5 rounded-full transition-all ${currentPage === 'home' ? 'bg-cyan-accent text-bg-primary font-bold' : 'text-text-secondary hover:bg-cyan-accent hover:text-bg-primary font-medium'}`}>Home</button>
+            <button onClick={() => onNavigate('services')} className={`text-sm px-5 py-2.5 rounded-full transition-all ${currentPage === 'services' ? 'bg-cyan-accent text-bg-primary font-bold' : 'text-text-secondary hover:bg-cyan-accent hover:text-bg-primary font-medium'}`}>Services</button>
+            <button onClick={() => onNavigate('portfolio')} className={`text-sm px-5 py-2.5 rounded-full transition-all ${currentPage === 'portfolio' ? 'bg-cyan-accent text-bg-primary font-bold' : 'text-text-secondary hover:bg-cyan-accent hover:text-bg-primary font-medium'}`}>Portfolio</button>
+            <button onClick={() => onNavigate('pricing')} className={`text-sm px-5 py-2.5 rounded-full transition-all ${currentPage === 'pricing' ? 'bg-cyan-accent text-bg-primary font-bold' : 'text-text-secondary hover:bg-cyan-accent hover:text-bg-primary font-medium'}`}>Pricing</button>
+            <button onClick={() => onNavigate('contact')} className={`text-sm px-5 py-2.5 rounded-full transition-all ${currentPage === 'contact' ? 'bg-cyan-accent text-bg-primary font-bold' : 'text-text-secondary hover:bg-cyan-accent hover:text-bg-primary font-medium'}`}>Contact</button>
           </div>
 
           {/* CTA Button */}
           <button 
-            onClick={() => onNavigate('contact')}
+            onClick={onOpenChat}
             className="hidden md:flex items-center gap-2 bg-cyan-accent text-bg-primary px-6 py-2.5 rounded-full font-bold text-sm hover:brightness-110 hover:shadow-lg hover:shadow-cyan-accent/50 transition-all hover:scale-105"
           >
             Free Consultation <ArrowUpRight size={16} strokeWidth={2.5} />
@@ -60,14 +60,14 @@ export default function Navbar({ onNavigate }) {
         {/* Mobile Menu */}
         {mobileMenuOpen && (
           <div className="md:hidden mt-4 pt-4 border-t border-border-card space-y-2">
-            <button onClick={() => { onNavigate('home'); setMobileMenuOpen(false); }} className="block w-full text-left px-4 py-2 rounded-lg bg-white/5 text-white font-medium transition">Home</button>
-            <button onClick={() => { onNavigate('services'); setMobileMenuOpen(false); }} className="block w-full text-left px-4 py-2 rounded-lg text-text-secondary hover:text-white hover:bg-white/5 transition">Services</button>
-            <button onClick={() => { onNavigate('portfolio'); setMobileMenuOpen(false); }} className="block w-full text-left px-4 py-2 rounded-lg text-text-secondary hover:text-white hover:bg-white/5 transition">Portfolio</button>
-            <button onClick={() => { onNavigate('pricing'); setMobileMenuOpen(false); }} className="block w-full text-left px-4 py-2 rounded-lg text-text-secondary hover:text-white hover:bg-white/5 transition">Pricing</button>
-            <button onClick={() => { onNavigate('contact'); setMobileMenuOpen(false); }} className="block w-full text-left px-4 py-2 rounded-lg text-text-secondary hover:text-white hover:bg-white/5 transition">Contact</button>
+            <button onClick={() => { onNavigate('home'); setMobileMenuOpen(false); }} className={`block w-full text-left px-4 py-2 rounded-lg transition-all ${currentPage === 'home' ? 'bg-cyan-accent text-bg-primary font-bold' : 'text-text-secondary hover:bg-cyan-accent hover:text-bg-primary font-medium'}`}>Home</button>
+            <button onClick={() => { onNavigate('services'); setMobileMenuOpen(false); }} className={`block w-full text-left px-4 py-2 rounded-lg transition-all ${currentPage === 'services' ? 'bg-cyan-accent text-bg-primary font-bold' : 'text-text-secondary hover:bg-cyan-accent hover:text-bg-primary font-medium'}`}>Services</button>
+            <button onClick={() => { onNavigate('portfolio'); setMobileMenuOpen(false); }} className={`block w-full text-left px-4 py-2 rounded-lg transition-all ${currentPage === 'portfolio' ? 'bg-cyan-accent text-bg-primary font-bold' : 'text-text-secondary hover:bg-cyan-accent hover:text-bg-primary font-medium'}`}>Portfolio</button>
+            <button onClick={() => { onNavigate('pricing'); setMobileMenuOpen(false); }} className={`block w-full text-left px-4 py-2 rounded-lg transition-all ${currentPage === 'pricing' ? 'bg-cyan-accent text-bg-primary font-bold' : 'text-text-secondary hover:bg-cyan-accent hover:text-bg-primary font-medium'}`}>Pricing</button>
+            <button onClick={() => { onNavigate('contact'); setMobileMenuOpen(false); }} className={`block w-full text-left px-4 py-2 rounded-lg transition-all ${currentPage === 'contact' ? 'bg-cyan-accent text-bg-primary font-bold' : 'text-text-secondary hover:bg-cyan-accent hover:text-bg-primary font-medium'}`}>Contact</button>
             <div className="pt-2">
               <button 
-                onClick={() => { onNavigate('contact'); setMobileMenuOpen(false); }}
+                onClick={() => { if(onOpenChat) onOpenChat(); setMobileMenuOpen(false); }}
                 className="w-full flex justify-center items-center gap-2 bg-cyan-accent text-bg-primary px-6 py-3 rounded-xl font-bold text-sm"
               >
                 Free Consultation <ArrowUpRight size={16} strokeWidth={2.5} />
